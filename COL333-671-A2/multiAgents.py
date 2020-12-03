@@ -51,6 +51,9 @@ class ReflexAgent(Agent):
 
         return legalMoves[chosenIndex]
 
+    def man_dist (self,x,y):
+        return (abs(x[0]-y[0]) + abs(x[1]-y[1]))
+
     def evaluationFunction(self, currentGameState, action):
         """
         Design a better evaluation function here.
@@ -74,7 +77,34 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        # print("score of succ state = ", successorGameState.getScore())
+        # print(newPos)
+        # print(newGhostStates) 
+        ghost_arr = []; food_arr = []
+        for elem in newGhostStates:
+            ghost_pos = elem.getPosition()
+            dist = self.man_dist(newPos,ghost_pos)
+            # if dist == 0:
+                # ghost_arr.append(-10000)
+                # continue
+            ghost_arr.append(dist)
+            # print(newPos , ".......", elem.getPosition(),".....",dist)
+        # print(ghost_arr)
+        for food_pos in newFood.asList():
+            dist = self.man_dist(newPos,food_pos)
+            food_arr.append(dist)
+
+        score = successorGameState.getScore()
+        # print (curr_score)
+        if (len(ghost_arr) != 0 and len(food_arr) != 0):
+            score += min(ghost_arr)
+            score -= min(food_arr)
+        
+        return score 
+
+
+
+
 
 def scoreEvaluationFunction(currentGameState):
     """
