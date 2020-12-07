@@ -83,13 +83,10 @@ class ReflexAgent(Agent):
         ghost_arr = []; food_arr = []
         for elem in newGhostStates:
             ghost_pos = elem.getPosition()
+            # print(ghost_pos)
             dist = self.man_dist(newPos,ghost_pos)
-            # if dist == 0:
-                # ghost_arr.append(-10000)
-                # continue
             ghost_arr.append(dist)
             # print(newPos , ".......", elem.getPosition(),".....",dist)
-        # print(ghost_arr)
         for food_pos in newFood.asList():
             dist = self.man_dist(newPos,food_pos)
             food_arr.append(dist)
@@ -97,8 +94,7 @@ class ReflexAgent(Agent):
         score = successorGameState.getScore()
         # print (curr_score)
         if (len(ghost_arr) != 0 and len(food_arr) != 0):
-            score += min(ghost_arr)
-            score -= min(food_arr)
+            score += min(ghost_arr); score -= min(food_arr)
         
         return score 
 
@@ -165,7 +161,40 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # print(gameState.getLegalActions(0))
+        # return gameState.getLegalActions(0)
+        def calc(gameState,depth,id):
+            if ((depth == self.depth) or (gameState.getLegalActions(id) == 0) or (gameState.isWin()) or (gameState.isLose())):
+                return (self.evaluationFunction(gameState),None)
+            neg_inf = -10000; pos_inf = 10000; 
+            best_max = neg_inf; best_min = pos_inf
+            if (id == 0):
+                for elem in gameState.getLegalActions(id):
+                    n = (id+1) % gameState.getNumAgents()
+                    (value,move) = calc(gameState.generateSuccessor(id,elem),depth,n)
+                    if (value > best_max):
+                        best_max = value
+                        max_move = elem
+            if best_max != neg_inf:
+                return (best_max,max_move)
+
+            if (id != 0):
+                for elem in gameState.getLegalActions(id):
+                    n = (id+1) % gameState.getNumAgents()
+                    if n != 0:
+                        (value,move) = calc(gameState.generateSuccessor(id,elem),depth,n)
+                    else:
+                        (value,move) = calc(gameState.generateSuccessor(id,elem),depth+1,n)
+                    if (value<best_min):
+                        best_min = value
+                        min_move = move
+            if best_min != pos_inf:
+                return (best_min,min_move)
+       
+        val = calc(gameState,0,0)[0]; move = calc(gameState,0,0)[1]
+        # print("best val = ",val);print("best move = ",move)
+        return move
+        # util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
