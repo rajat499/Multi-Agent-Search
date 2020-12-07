@@ -191,8 +191,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
             if best_min != pos_inf:
                 return (best_min,min_move)
        
-        val = calc(gameState,0,0)[0]; move = calc(gameState,0,0)[1]
-        # print("best val = ",val);print("best move = ",move)
+        value = calc(gameState,0,0)[0]; move = calc(gameState,0,0)[1]
+        # print("best val = ",value);print("best move = ",move)
         return move
         # util.raiseNotDefined()
 
@@ -206,7 +206,46 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def calc(gameState,depth,id,alpha,beta):
+            if ((depth == self.depth) or (gameState.getLegalActions(id) == 0) or (gameState.isWin()) or (gameState.isLose())):
+                return (self.evaluationFunction(gameState),None)
+            neg_inf = -10000; pos_inf = 10000; 
+            best_max = neg_inf; best_min = pos_inf
+            if (id == 0):
+                for elem in gameState.getLegalActions(id):
+                    n = (id+1) % gameState.getNumAgents()
+                    (value,move) = calc(gameState.generateSuccessor(id,elem),depth,n,alpha,beta)
+                    if (value > best_max):
+                        best_max = value
+                        max_move = elem
+                    if best_max > beta:
+                        return (best_max,max_move)
+                    alpha = max(alpha,best_max)
+
+            if best_max != neg_inf:
+                return (best_max,max_move)
+
+            if (id != 0):
+                for elem in gameState.getLegalActions(id):
+                    n = (id+1) % gameState.getNumAgents()
+                    if n != 0:
+                        (value,move) = calc(gameState.generateSuccessor(id,elem),depth,n,alpha,beta)
+                    else:
+                        (value,move) = calc(gameState.generateSuccessor(id,elem),depth+1,n,alpha,beta)
+                    if (value<best_min):
+                        best_min = value
+                        min_move = move
+                    if best_min < alpha:
+                        return (best_min,min_move)
+                    beta = min(beta,best_min)
+
+            if best_min != pos_inf:
+                return (best_min,min_move)
+
+        value = calc(gameState,0,0,-10000,10000)[0]; move = calc(gameState,0,0,-10000,10000)[1]
+        # print("best val = ",value);print("best move = ",move)
+        return move
+        # util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
