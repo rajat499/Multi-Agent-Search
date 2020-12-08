@@ -85,6 +85,8 @@ class ReflexAgent(Agent):
             ghost_pos = elem.getPosition()
             # print(ghost_pos)
             dist = self.man_dist(newPos,ghost_pos)
+            if dist == 0:
+                return -1000
             ghost_arr.append(dist)
             # print(newPos , ".......", elem.getPosition(),".....",dist)
         for food_pos in newFood.asList():
@@ -92,10 +94,10 @@ class ReflexAgent(Agent):
             food_arr.append(dist)
 
         score = successorGameState.getScore()
-        # print (curr_score)
         if (len(ghost_arr) != 0 and len(food_arr) != 0):
-            score += min(ghost_arr); score -= min(food_arr)
-        
+            if min(food_arr) != 0:
+                score += (min(ghost_arr)/min(food_arr))
+            # score += min(ghost_arr); score -= min(food_arr)
         return score 
 
 
@@ -292,10 +294,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         # print("best val = ",value);print("best move = ",move)
         return move
 
-
-
-        util.raiseNotDefined()
-
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -304,7 +302,34 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def man_dist (x,y):
+        return (abs(x[0]-y[0]) + abs(x[1]-y[1]))
+    
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    score = currentGameState.getScore()
+    f1 = 10; f2 = 5; f3 = 100
+    ghost_arr = [];food_arr = []
+    for elem in newGhostStates:
+        ghost_pos = elem.getPosition()
+        dist = man_dist(newPos,ghost_pos)
+        ghost_arr.append(dist)
+        if dist > 0:
+            if elem.scaredTimer > 0:
+                score += f3/dist
+            else:
+                score -= f2/dist
+    for food_pos in newFood.asList():
+        dist = man_dist(newPos,food_pos)
+        food_arr.append(dist)
+    if len(food_arr) != 0:
+        if min(food_arr) != 0:
+            score += f1/min(food_arr)
+    return score
+
+
+
 
 # Abbreviation
 better = betterEvaluationFunction
