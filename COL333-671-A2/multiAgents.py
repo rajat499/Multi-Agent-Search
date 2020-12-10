@@ -204,10 +204,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
             if best_min != pos_inf:
                 return (best_min,min_move)
        
-        value = calc(gameState,0,0)[0]; move = calc(gameState,0,0)[1]
-        # print("best val = ",value);print("best move = ",move)
+        move = calc(gameState,0,0)[1]
         return move
-        # util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -319,6 +317,7 @@ def betterEvaluationFunction(currentGameState):
     newPos = currentGameState.getPacmanPosition()
     newFood = currentGameState.getFood()
     newGhostStates = currentGameState.getGhostStates()
+    pellets = currentGameState.getCapsules()
     score = currentGameState.getScore()
     f1 = 10; f2 = 5; f3 = 100
     ghost_arr = [];food_arr = []
@@ -333,6 +332,9 @@ def betterEvaluationFunction(currentGameState):
                 score -= f2/dist
     for food_pos in newFood.asList():
         dist = man_dist(newPos,food_pos)
+        food_arr.append(dist)
+    for item in pellets:
+        dist = man_dist(newPos,item)
         food_arr.append(dist)
     if len(food_arr) != 0:
         if min(food_arr) != 0:
