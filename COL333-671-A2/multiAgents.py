@@ -253,7 +253,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if best_min != pos_inf:
                 return (best_min,min_move)
 
-        value = calc(gameState,0,0,-10000,10000)[0]; move = calc(gameState,0,0,-10000,10000)[1]
+        move = calc(gameState,0,0,-10000,10000)[1]
         # print("best val = ",value);print("best move = ",move)
         return move
         # util.raiseNotDefined()
@@ -299,7 +299,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if len(total) != 0:
                 return (sum(total)/len(total),min_move)
        
-        value = calc(gameState,0,0)[0]; move = calc(gameState,0,0)[1]
+        move = calc(gameState,0,0)[1]
         # print("best val = ",value);print("best move = ",move)
         return move
 
