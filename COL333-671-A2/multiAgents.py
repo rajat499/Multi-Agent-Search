@@ -77,27 +77,38 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        # print("score of succ state = ", successorGameState.getScore())
-        # print(newPos)
-        # print(newGhostStates) 
+        score = successorGameState.getScore()
+        newFood = newFood.asList()
+
+        if len(newFood) == 0:
+            return score + 10000
+        
+        OldPellets = currentGameState.getCapsules()
+        NewPellets = successorGameState.getCapsules()
+
+        if len(OldPellets)-len(NewPellets) == 1:
+            return score + 10000
+
         ghost_arr = []; food_arr = []
         for elem in newGhostStates:
             ghost_pos = elem.getPosition()
-            # print(ghost_pos)
             dist = self.man_dist(newPos,ghost_pos)
-            if dist == 0:
-                return -1000
+            if dist < 2:
+                return score - 100000
             ghost_arr.append(dist)
-            # print(newPos , ".......", elem.getPosition(),".....",dist)
-        for food_pos in newFood.asList():
+
+        for food_pos in newFood:
             dist = self.man_dist(newPos,food_pos)
             food_arr.append(dist)
 
-        score = successorGameState.getScore()
+        for item in NewPellets:
+            dist = self.man_dist(newPos, item)
+            food_arr.append(dist)
+
         if (len(ghost_arr) != 0 and len(food_arr) != 0):
             if min(food_arr) != 0:
-                score += (min(ghost_arr)/min(food_arr))
-            # score += min(ghost_arr); score -= min(food_arr)
+                # score += (min(ghost_arr)/min(food_arr))
+                score += (1/min(food_arr))
         return score 
 
 
