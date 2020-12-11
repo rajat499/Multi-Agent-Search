@@ -319,8 +319,11 @@ def betterEvaluationFunction(currentGameState):
     newGhostStates = currentGameState.getGhostStates()
     pellets = currentGameState.getCapsules()
     score = currentGameState.getScore()
-    f1 = 10; f2 = 5; f3 = 100
+    
+    f1 = 10; f2 = 5; f3 = 250
+    
     ghost_arr = [];food_arr = []
+    
     for elem in newGhostStates:
         ghost_pos = elem.getPosition()
         dist = man_dist(newPos,ghost_pos)
@@ -330,12 +333,15 @@ def betterEvaluationFunction(currentGameState):
                 score += f3/dist
             else:
                 score -= f2/dist
+    
     for food_pos in newFood.asList():
         dist = man_dist(newPos,food_pos)
         food_arr.append(dist)
+    
     for item in pellets:
         dist = man_dist(newPos,item)
         food_arr.append(dist)
+
     if len(food_arr) != 0:
         if min(food_arr) != 0:
             score += f1/min(food_arr)
